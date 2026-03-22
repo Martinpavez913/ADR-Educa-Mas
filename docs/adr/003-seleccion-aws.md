@@ -1,4 +1,4 @@
-#1. Título
+1. Título
 ADR 003: Selección de AWS (S3 y CloudFront) como proveedor de almacenamiento y CDN.
 2. Fecha
 22 de marzo de 2026.
