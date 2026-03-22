@@ -1,27 +1,18 @@
-1. Título
-ADR 001: Evaluación de estrategias A y B de almacenamiento de videos.
-2. Fecha
-22 de marzo de 2026.
-3. Contexto
-La empresa "EducaMás" necesita definir la estrategia de almacenamiento y distribución para los videos de sus cursos. En este documento se evalúan las opciones A y B. La primera opción (A), consta de almacenamiento en la nube con CDN (Red de Entrega de Contenido): Utilizar un servicio de almacenamiento en la nube como AWS S3 o Google Cloud Storage, combinado con una CDN para la entrega eficiente de los videos a los usuarios, mientras que la segunda opción (B), consiste en almacenamiento y mantención en servidores propios de la empresa.
-Para este análisis, consideramos las siguientes variables del proyecto:
-Volumen estimado de videos: Se proyectan 500 horas de video durante el primer año.
-Tráfico esperado: Peaks de 10.000 usuarios concurrentes.
-Presupuesto: Infraestructura con presupuesto limitado.
-Requisitos de rendimiento: Reproducción de vídeo con baja latencia.
-Requisitos de seguridad: Protección contra descargas no autorizadas.
-Conocimientos técnicos: El equipo posee experiencia en la gestión de servidores físicos.
-4. Decisión
-Se decide RECHAZAR la Opción B de almacenamiento en servidores propios.
-Justificación: El motivo principal de este rechazo es la incapacidad de escalar de forma elástica y rentable. Transmitir video a 10.000 usuarios concurrentes exige un ancho de banda masivo y un alto poder de procesamiento. En un entorno de servidores propios (on-premise), la única forma de soportar este peak es sobredimensionando la infraestructura desde el día uno (comprando servidores y enlaces de red gigantescos "por si acaso"), lo cual es inviable debido a nuestro presupuesto limitado.
-Si la plataforma tiene un crecimiento repentino de estudiantes, los servidores físicos se saturarían, provocando alta latencia y fallos en la reproducción. La escalabilidad física es lenta (requiere comprar, instalar y configurar nuevo hardware), lo que nos impediría reaccionar a tiempo ante el éxito comercial de los cursos.
+ADR 001: Estrategia de almacenamiento y distribución de videos para EducaMás
+2. Fecha: 22 de marzo de 2026
+3. Contexto: La empresa "EducaMás" está desarrollando una plataforma de cursos online y necesita definir la arquitectura de almacenamiento y distribución para sus contenidos en video. Las alternativas evaluadas son el uso de almacenamiento en la nube con CDN (Opción A) y el almacenamiento en servidores propios (Opción B). Para tomar esta decisión, consideramos los siguientes factores:
+a. Volumen estimado de videos: Se proyecta alojar aproximadamente 500 horas de video durante el primer año de operación.
+b. Tráfico esperado: Se estiman peaks de hasta 10.000 usuarios concurrentes consumiendo video al mismo tiempo.
+c. Presupuesto: Contamos con un presupuesto inicial limitado para la compra de infraestructura física (hardware).
+d. Requisitos de rendimiento: Es crítico mantener una baja latencia para evitar interrupciones (buffering) en la reproducción de los cursos.
+e. Requisitos de seguridad: Se requiere protección contra descargas no autorizadas para proteger la propiedad intelectual de los cursos.
+f. Conocimientos técnicos del equipo: El equipo actual tiene experiencia gestionando servidores físicos, pero posee poca experiencia práctica en la configuración de Redes de Entrega de Contenido (CDNs).
+4. Decisión: Se elige la Opción A: Almacenamiento en la nube con CDN. Justificación: Aunque el equipo tiene experiencia en servidores propios (Opción B) , mantener 10.000 conexiones concurrentes de video desde un único centro de datos saturaría rápidamente el ancho de banda y requeriría una inversión altísima en hardware, algo incompatible con nuestro presupuesto limitado. La nube nos permite un modelo de pago por uso, y la CDN garantiza que los videos se entregan con baja latencia desde el servidor más cercano geográficamente al estudiante. Además, los proveedores cloud ofrecen firmas de URLs (Signed URLs) que resuelven fácilmente el requisito de seguridad contra descargas no autorizadas.
+5. Consecuencias:
+a. Impacto en el desarrollo: El equipo de desarrollo deberá aprender e integrar la API del proveedor Cloud (ej. AWS S3 o GCP) y configurar las políticas de la CDN.
+b. Impacto en el mantenimiento: La carga operativa disminuye drásticamente, ya que la responsabilidad de mantener los discos duros y la red física recae sobre el proveedor de la nube.
+c. Impacto en los costos: Cambiamos de un modelo de inversión inicial (comprar servidores) a un modelo de gasto operativo; pagaremos mensualmente por GB almacenado y por GB transferido a los usuarios.
+d. Riesgos: Generamos dependencia tecnológica con un proveedor externo (Vendor lock-in) y existe el riesgo de que los costos mensuales se disparen si el tráfico aumenta sin optimizar la compresión de los videos. Además, hay una curva de aprendizaje inicial para el equipo respecto al uso de la CDN.
+6. Estado: Aceptado
 
-
-5. Consecuencias
-Impacto en el desarrollo: Al descartar esta opción, el equipo de desarrollo no podrá aprovechar su experiencia actual en la gestión de servidores locales para el almacenamiento de medios, obligándonos a adoptar tecnologías externas.
-Impacto en el mantenimiento: El equipo se libera de la carga operativa de mantener discos duros, reemplazar hardware dañado y gestionar la red física.
-Impacto en los costos: Se evitan los altísimos costos iniciales de inversión en hardware (CAPEX) y los costos de mantenimiento de centros de datos propios.
-Riesgos: Evitamos el riesgo de caída del servicio por cuellos de botella en nuestra red local en horas punta, pero adquirimos el desafío de buscar y asegurar una solución externa que cumpla con las expectativas.
-6. Estado
-Rechazado.
 
